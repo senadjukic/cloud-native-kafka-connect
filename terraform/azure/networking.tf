@@ -43,13 +43,15 @@ resource "azurerm_public_ip" "publicip" {
 ###########################################
 
 resource "azurerm_network_security_group" "nsg" {
+  count               = var.create_networksg ? 1 : 0
   name                = "${var.prefix}-${var.project}-nsg"
-  location            = var.location
+  location            = var.region
   resource_group_name = azurerm_resource_group.rg.name
   tags                = var.tags
 }
 
 resource "azurerm_network_security_rule" "ssh_sr" {
+  count                       = var.create_networksg ? 1 : 0
   name                        = "SSH"
   priority                    = 1001
   direction                   = "Inbound"
@@ -64,6 +66,7 @@ resource "azurerm_network_security_rule" "ssh_sr" {
 }
 
 resource "azurerm_network_security_rule" "c3_sr" {
+  count                       = var.create_networksg ? 1 : 0
   name                        = "HTTP80"
   priority                    = 1002
   direction                   = "Inbound"
@@ -78,6 +81,7 @@ resource "azurerm_network_security_rule" "c3_sr" {
 }
 
 resource "azurerm_network_security_rule" "ksqldb_sr" {
+  count                       = var.create_networksg ? 1 : 0
   name                        = "HTTP8088"
   priority                    = 1003
   direction                   = "Inbound"
@@ -92,6 +96,7 @@ resource "azurerm_network_security_rule" "ksqldb_sr" {
 }
 
 resource "azurerm_network_security_rule" "connect_sr" {
+  count                       = var.create_networksg ? 1 : 0
   name                        = "HTTP8083"
   priority                    = 1004
   direction                   = "Inbound"

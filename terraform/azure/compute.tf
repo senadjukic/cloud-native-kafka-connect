@@ -1,4 +1,11 @@
-cc
+###########################################
+################# Azure ###################
+###########################################
+
+###########################################
+############ Network Interface ############
+###########################################
+
 resource "azurerm_network_interface" "nic" {
   count               = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
   name                = "${var.prefix}-${var.project}-server-${count.index}-nic"
