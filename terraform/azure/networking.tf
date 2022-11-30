@@ -21,7 +21,7 @@ resource "azurerm_virtual_network" "vnet_network" {
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-${var.project}-vnet-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = azurerm_virtual_network.vnet_network.name
   address_prefixes     = ["10.10.68.0/24"]
 }
 
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "ssh_sr" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
+  network_security_group_name = azurerm_network_security_group.nsg[0].name
 }
 
 resource "azurerm_network_security_rule" "c3_sr" {
@@ -77,7 +77,7 @@ resource "azurerm_network_security_rule" "c3_sr" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
+  network_security_group_name = azurerm_network_security_group.nsg[0].name
 }
 
 resource "azurerm_network_security_rule" "ksqldb_sr" {
@@ -92,7 +92,7 @@ resource "azurerm_network_security_rule" "ksqldb_sr" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
+  network_security_group_name = azurerm_network_security_group.nsg[0].name
 }
 
 resource "azurerm_network_security_rule" "connect_sr" {
@@ -107,5 +107,5 @@ resource "azurerm_network_security_rule" "connect_sr" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.rg.name
-  network_security_group_name = azurerm_network_security_group.nsg.name
+  network_security_group_name = azurerm_network_security_group.nsg[0].name
 }

@@ -11,7 +11,7 @@ terraform {
     }
   }
 
-  required_version = ">= 3.0.0"
+  required_version = ">= 1.0.0"
 }
 
 # Configure the Microsoft Azure Provider to be used with CLI based Authentication,

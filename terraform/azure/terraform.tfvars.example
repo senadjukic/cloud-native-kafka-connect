@@ -1,0 +1,36 @@
+# NOTE: Rename this file to terraform.tfvars and edit according to your environment
+
+# Azure tenant and subcription id required by terraform to ensure we create the resources in the right Azure environment.
+azure_tenant_id       = ""
+azure_subscription_id = ""
+
+#Generic naming elements for resource namespacing and grouping based on naming convention used throughout the scripts.
+prefix                = "meetse"
+project               = "cloudnativeconnect"
+
+# Optional tagging for cloud resources. Defined as a map of keys and values
+# Replace with your own keys and values, or delete this if not needed
+tags = {
+  "Environment" = "demo"
+  "Owner_Name"  = "confluent"
+  "Owner_Email" = "jdoe@yahoo.com"
+}
+
+# Infrastructure control
+create_networksg       = false # If set, a network security group with network security rules will be created for the VNet.
+instance_count        = { vms = 0 } 
+
+#Infrastructure parameters, change them to meet your desired Azure setup 
+region                = "switzerlandnorth"
+zone                  = ""
+
+## Azure Virtual Machine configuration parameters
+admin_username        = "confluent"
+vm_size               = "Standard_DS3_v2"
+vm_disk_type          = "Premium_LRS"
+vm_disk_size          = 100
+vm_image_sku          = {
+    westeurope         = "18.04-LTS"
+    germanywestcentral = "22.04-LTS"
+    switzerlandnorth   = "22.04-LTS"
+  }

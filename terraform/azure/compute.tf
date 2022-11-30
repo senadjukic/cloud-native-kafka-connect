@@ -9,7 +9,7 @@
 resource "azurerm_network_interface" "nic" {
   count               = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
   name                = "${var.prefix}-${var.project}-server-${count.index}-nic"
-  location            = var.location
+  location            = var.region
   resource_group_name = azurerm_resource_group.rg.name
   ip_configuration {
     name                          = "${var.prefix}-${var.project}-server-${count.index}-nic-config"
@@ -27,53 +27,54 @@ resource "azurerm_network_interface" "nic" {
 ###########################################
 
 resource "tls_private_key" "ssh_keypair" {
+  count     = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
-output "tls_private_key" {
-  value     = tls_private_key.ssh_keypair.private_key_pem
-  sensitive = true
+
+#output "tls_private_key" {
+#  value     = tls_private_key.ssh_keypair.private_key_pem
+#  sensitive = true
+#}
+
+resource "local_sensitive_file" "private_key_file" {
+    count           = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
+    content         = tls_private_key.ssh_keypair[0].private_key_pem
+    filename        = "${path.root}/../config/${var.prefix}-${var.project}-vm.pem"
+    file_permission = "0400"
 }
 
 ###########################################
 ############# Virtual Machine #############
 ###########################################
 
-resource "azurerm_virtual_machine" "vm" {
-  count                         = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
-  name                          = "${var.prefix}-${var.project}-server-${count.index}-vm"
-  location                      = var.location
-  resource_group_name           = azurerm_resource_group.rg.name
-  network_interface_ids         = [azurerm_network_interface.nic[count.index].id]
-  vm_size                       = "Standard_DS3_v2"
-  delete_os_disk_on_termination = true
-  tags                          = var.tags
+resource "azurerm_linux_virtual_machine" "vm" {
+  count                           = var.instance_count["vms"] >= 1 ? var.instance_count["vms"] : 0
+  name                            = "${var.prefix}-${var.project}-server-${count.index}-vm"
+  location                        = var.region
+  resource_group_name             = azurerm_resource_group.rg.name
+  admin_username                  = var.admin_username
+  disable_password_authentication = true
+  network_interface_ids           = [azurerm_network_interface.nic[count.index].id]
+  size                            = var.vm_size
+  tags                            = var.tags
 
-  storage_os_disk {
-    name              = "${var.prefix}-${var.project}-server-${count.index}-os-disk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
-    disk_size_gb      = 100
+  admin_ssh_key {
+   username    = var.admin_username
+   public_key  = tls_private_key.ssh_keypair[0].public_key_openssh
   }
 
-  storage_image_reference {
+  os_disk {
+    name                 = "${var.prefix}-${var.project}-server-${count.index}-os-disk"
+    caching              = "ReadWrite"
+    storage_account_type = var.vm_disk_type
+    disk_size_gb         = 100
+  }
+
+  source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = lookup(var.sku, var.location)
+    sku       = lookup(var.vm_image_sku, var.region)
     version   = "latest"
-  }
-
-  os_profile {
-    computer_name  = "${var.prefix}-${var.project}-vm-${count.index}"
-    admin_username = var.admin_username
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data = tls_private_key.ssh_keypair.public_key_openssh
-      path     = "/home/${var.admin_username}/.ssh/authorized_keys"
-    }
   }
 }
