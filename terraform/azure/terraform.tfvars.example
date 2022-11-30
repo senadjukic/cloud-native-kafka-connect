@@ -18,7 +18,11 @@ tags = {
 
 # Infrastructure control
 create_networksg       = false # If set, a network security group with network security rules will be created for the VNet.
-instance_count        = { vms = 0 } 
+create_aks             = true  # If set, an AKS Kubernetes cluster with a default node poolwill be created.
+
+instance_count        = { vms = 0 
+                          k8s_nodes = 4
+                        } 
 
 #Infrastructure parameters, change them to meet your desired Azure setup 
 region                = "switzerlandnorth"
@@ -31,6 +35,12 @@ vm_disk_type          = "Premium_LRS"
 vm_disk_size          = 100
 vm_image_sku          = {
     westeurope         = "18.04-LTS"
-    germanywestcentral = "22.04-LTS"
-    switzerlandnorth   = "22.04-LTS"
+    germanywestcentral = "18.04-LTS"
+    switzerlandnorth   = "18.04-LTS"
   }
+
+## Azure Kubernetes Service and Node Pool configuration parameters
+aks_node_vm_size      = "Standard_DS3_v2"
+aks_max_pods_per_node = 30
+aks_os_sku            = "Ubuntu"
+aks_disk_size         = 60

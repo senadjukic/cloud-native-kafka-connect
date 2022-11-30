@@ -42,11 +42,17 @@ variable "create_networksg" {
   description = "Parameter that determines whether the Network Security Group and Rules will be created or not."
 }
 
+variable "create_aks" {
+  type        = bool
+  description = "Parameter that determines whether the AKS K8s cluster will be created or not."
+}
+
 variable "instance_count" {
   type = map(string)
   default = {
     vms = 1 # If set to 0, no virtual machines and related resources will be created.
     lbs = 0
+    k8s_nodes = 4
   }
 }
 
@@ -101,4 +107,26 @@ variable "vm_image_sku" {
 
 ## Azure Kubernetes Service configuration parameters
 
+variable "aks_node_vm_size" {
+  type        = string
+  description = "The SKU which should be used for this AKS Node Pool"
+  default     = "Standard_DS3_v2"
+}
 
+variable "aks_max_pods_per_node" {
+  type        = number
+  description = "Maximum pods per node in default node pool nodes on AKS cluster."
+  default     = 110
+}
+
+variable "aks_os_sku" {
+  type        = string
+  description = "Specifies the OS SKU used by the agent pool. Possible values include: Ubuntu, CBLMariner, Mariner, Windows2019, Windows2022"
+  default     = "Ubuntu"
+}
+
+variable "aks_disk_size" {
+  type        = number
+  description = "The size of the Internal OS Disk in GB"
+  default     = 128
+}
