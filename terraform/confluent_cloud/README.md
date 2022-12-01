@@ -1,0 +1,1 @@
+# Create Confluent Cloud infrastructure for a self-managed Kafka Connectors with Confluent for Kubernetes in AKS and ACX

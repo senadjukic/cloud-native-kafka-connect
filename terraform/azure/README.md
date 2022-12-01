@@ -1,0 +1,1 @@
+# Create Azure infrastructure for a self-managed Kafka Connector with Confluent for Kubernetes in Azure Kubernetes Service

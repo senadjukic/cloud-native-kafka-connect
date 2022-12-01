@@ -47,6 +47,11 @@ variable "create_aks" {
   description = "Parameter that determines whether the AKS K8s cluster will be created or not."
 }
 
+variable "deploy_cfk" {
+  type        = bool
+  description = "Parameter that determines whether the CFK Operator will deployed via Helm in the newly created AKS K8s cluster or not."
+}
+
 variable "instance_count" {
   type = map(string)
   default = {
@@ -129,4 +134,10 @@ variable "aks_disk_size" {
   type        = number
   description = "The size of the Internal OS Disk in GB"
   default     = 128
+}
+
+variable "aks_application_namespace" {
+  type        = string
+  description = "Specifies an application specific Kubernetes namespace in our newly created AKS cluster"
+  default     = "confluent"
 }

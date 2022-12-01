@@ -1,8 +1,8 @@
 # NOTE: Rename this file to terraform.tfvars and edit according to your environment
 
 # Azure tenant and subcription id required by terraform to ensure we create the resources in the right Azure environment.
-azure_tenant_id       = ""
-azure_subscription_id = ""
+azure_tenant_id       = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+azure_subscription_id = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 #Generic naming elements for resource namespacing and grouping based on naming convention used throughout the scripts.
 prefix                = "meetse"
@@ -19,10 +19,10 @@ tags = {
 # Infrastructure control
 create_networksg       = false # If set, a network security group with network security rules will be created for the VNet.
 create_aks             = true  # If set, an AKS Kubernetes cluster with a default node poolwill be created.
-
-instance_count        = { vms = 0 
-                          k8s_nodes = 4
-                        } 
+deploy_cfk             = true      # If set, an the CfK Operator will be deployed via Helm to the newly created AKS Kubernetes cluster.
+instance_count         = { vms = 0 
+                           k8s_nodes = 4
+                         } 
 
 #Infrastructure parameters, change them to meet your desired Azure setup 
 region                = "switzerlandnorth"
@@ -44,3 +44,6 @@ aks_node_vm_size      = "Standard_DS3_v2"
 aks_max_pods_per_node = 30
 aks_os_sku            = "Ubuntu"
 aks_disk_size         = 60
+
+## Confluent for Kubernetes configuration parameters in Azure Kubernetes Service 
+aks_application_namespace = "confluent"

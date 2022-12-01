@@ -1,7 +1,7 @@
 ###########################################
 ################# Azure ###################
 ###########################################
-# Configure the required providers for Azure
+# Configure the required providers for Azure, Kubernetes and Helm
 
 terraform {
   required_providers {
@@ -14,9 +14,14 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.0.0"
     }
+
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.7.1"
+    }
   }
 
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.3.0"
 }
 
 # Configure the Microsoft Azure Provider to be used with CLI based Authentication,
@@ -33,4 +38,13 @@ provider "azurerm" {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
+}
+
+# Configure the Helm provider to be used with kubectl based Authentication,
+# as we are using this Terraform script for demos from the developer's local machine.
+
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }
