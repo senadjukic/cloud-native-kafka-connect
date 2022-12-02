@@ -33,6 +33,16 @@ variable "create_ccloud_environment" {
   description = "Parameter that determines whether a new Confluent Cloud Environment will be created or not."
 }
 
+variable "create_ccloud_service_account" {
+  type        = bool
+  description = "Parameter that determines whether a new Service Account will be created or not."
+}
+
+variable "create_ccloud_rolebindings" {
+  type        = bool
+  description = "Parameter that determines whether data plane role bindings Confluent Cloud Environment will be created for the newly created Service Account or not."
+}
+
 
 ## Confluent Cloud Environment configuration parameters
 variable "confluent_env_id" {
@@ -44,6 +54,7 @@ variable "confluent_environment_display_name" {
   type        = string
   description = "New Confluent Cloud Environment display name in which the Confluent Cloud Cluster will be deployed."
 }
+
 
 ## Confluent Cloud Kafka Cluster configuration parameters
 variable "confluent_availability" {
@@ -63,3 +74,49 @@ variable "region" {
   description = "The CSP Region where the Confluent Cloud cluster will be deployed."
   default = "germanywestcentral"
 }
+
+
+## Confluent Cloud Service Account configuration paramters
+variable "account_name" {
+  type        = string
+  description = "The name element used to configure the Service Account name, using the pattern {var.prefix}-{var.account_name}-sa."
+  default     = "connect"
+}
+
+
+## Confluent Cloud Role Binding configuration paramters
+
+variable "license_topic" {
+  type        = string
+  description = "The name of the license topic that is used by Commercial Confluent Cloud components"
+  default     = "_confluent-command"
+}
+
+variable "connect_internal_topic_prefix" {
+  type        = string
+  description = "The topic name prefix used for the Kafka Connect internal topics."
+  default     = "confluent.*"
+}
+
+variable "namespace_topic_prefix" {
+  type           = string
+  description    = "The topic name prefix used for application topics in the project namespace to which applications, such as connectors, write or read from."
+}
+
+variable "license_group_prefix" {
+  type        = string
+  description = "The consumer group name prefix to read from the license topic that is used by Commercial Confluent Cloud components"
+  default     = "_confluent-command"
+}
+
+variable "connect_internal_group_prefix" {
+  type        = string
+  description = "The consumer group prefix used to read from Kafka Connect internal topics."
+  default     = "confluent.*"
+}
+
+variable "namespace_group_prefix" {
+  type           = string
+  description    = "The consumer group prefix used to read from application topics in the project namespace."
+}
+
