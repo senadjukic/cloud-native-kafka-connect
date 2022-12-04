@@ -13,6 +13,10 @@ data "confluent_environment" "existing_env" {
 resource "confluent_environment" "new_env" {
   count        = var.create_ccloud_environment ? 1 : 0  
   display_name = var.confluent_environment_display_name
+  
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 locals {
@@ -32,5 +36,9 @@ resource "confluent_kafka_cluster" "standard" {
 
   environment {
     id = local.ccloud_env_id
+  }
+
+  lifecycle {
+    prevent_destroy = false
   }
 }

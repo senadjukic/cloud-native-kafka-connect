@@ -72,11 +72,30 @@ variable "ccloud_service_provider" {
 variable "region" {
   type        = string
   description = "The CSP Region where the Confluent Cloud cluster will be deployed."
-  default = "germanywestcentral"
+  default     = "germanywestcentral"
 }
 
 
-## Confluent Cloud Service Account configuration paramters
+## Confluent Cloud Schema Registry configuration parameters
+variable "sr_region" {
+  type        = string
+  description = "The CSP Region where the Confluent Cloud Schema Registry cluster will be deployed."
+  default     = "westeurope"
+}
+
+variable "confluent_sr_id" {
+  type        = string
+  description = "Existing Confluent Cloud Schema Registry id configured for an existing Confluent Cloud Environment in which the Confluent Cloud Cluster will be deployed."
+}
+
+variable "sr_package" {
+  type        = string
+  description = "The Confluent Cloud Schema Registry billing package type. Valid values are ESSENTIALS and ADVANCED."
+  default     = "ESSENTIALS"
+}
+
+
+## Confluent Cloud Service Account configuration parameters
 variable "account_name" {
   type        = string
   description = "The name element used to configure the Service Account name, using the pattern {var.prefix}-{var.account_name}-sa."
@@ -84,8 +103,7 @@ variable "account_name" {
 }
 
 
-## Confluent Cloud Role Binding configuration paramters
-
+## Confluent Cloud Role Binding configuration parameters
 variable "license_topic" {
   type        = string
   description = "The name of the license topic that is used by Commercial Confluent Cloud components"
@@ -120,3 +138,16 @@ variable "namespace_group_prefix" {
   description    = "The consumer group prefix used to read from application topics in the project namespace."
 }
 
+
+## Confluent Cloud CfK Configurations configuration parameters
+variable "cfk_config_dir" {
+  type           = string
+  description    = "The directory name where the Confluent for K8s configuration files are stored in this github repository."
+}
+
+
+## Confluent Cloud Azure Container Infrastructure Configurations configuration parameters
+variable "aci_config_dir" {
+  type           = string
+  description    = "The directory name where the Azure Container Infrastructure configuration files are stored in this github repository."
+}

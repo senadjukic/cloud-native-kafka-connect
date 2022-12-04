@@ -1,0 +1,7 @@
+#! /bin/bash
+export CONFLUENT_CLOUD_BOOTSTRAP_SERVERS='${ccloud_kafka_bootstrap_url}'
+export SERVICE_ACCOUNT_API_KEY="${kafka_api_key}"
+export SERVICE_ACCOUNT_API_KEY_SECRET="${kafka_api_secret}"
+export CONFLUENT_CLOUD_SCHEMA_REGISTRY_ENDPOINT='${ccloud_sr_url}'
+export CONFLUENT_CLOUD_SCHEMA_REGISTRY_CREDENTIALS='username:password'
+export CONNECTOR_NAME='azure-blob-sink'
