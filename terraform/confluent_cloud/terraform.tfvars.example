@@ -1,0 +1,44 @@
+#Generic naming elements for resource namespacing and grouping based on naming convention used throughout the scripts.
+prefix                = "meetse"
+project               = "cloudnativeconnect"
+
+# Confluent Cloud credentials (API Key and Secret) for a User- or Service account with at least EnvironmentAdmin role assigned 
+# to be used by the Confluent terraform provider.
+confluent_cloud_admin_api_key    = "XXXXXXXXXXXXXXXX"
+confluent_cloud_admin_api_secret = "****************************************************************"
+
+# Infrastructure control
+create_ccloud_environment     = true  # If set, a new environment will be created in the Confluent Cloud Organisation. This requires OrgAdmin role for the credentials used by the Confluent Cloud terraform provider.
+create_ccloud_service_account = true  # If set, a new service account will be created in the Confluent Cloud Organisation. This requires OrgAdmin role for the credentials used by the Confluent Cloud terraform provider.
+create_ccloud_rolebindings    = true  # If set, new data plane role bindings for the newly created service account will be created in the Confluent Cloud Organisation. This setting works in concert with the create_ccloud_service_account setting. This requires OrgAdmin role for the credentials used by the Confluent Cloud terraform provider.
+
+## Confluent Cloud Environment configuration parameters
+confluent_env_id                   = "env-xxxxx"            # Existing Confluent Cloud Environment id in which the Confluent Cloud Cluster will be deployed.
+confluent_environment_display_name = "CloudNativeConnect"   # Name for a newly created Confluent Cloud Environment in which the Confluent Cloud Cluster will be deployed.
+
+## Confluent Cloud Kafka (Standard) Cluster configuration parameters
+confluent_availability          = "SINGLE_ZONE"         # The availability zone configuration of the Confluent Cloud Kafka cluster. Valid values are SINGLE_ZONE and MULTI_ZONE.
+ccloud_service_provider         = "AZURE"               # The cloud service provider that runs the Confluent Cloud Kafka cluster. Valid values are AWS, AZURE, and GCP.
+region                          = "switzerlandnorth"    # The CSP Region where the Confluent Cloud cluster will be deployed.
+
+## Confluent Cloud Schema Registry configuration parameters
+sr_region       = "westeurope"  # The CSP Region where the Confluent Cloud schema registry will be deployed. As there are a limited number and billing package of regions available where SR instances can be deployed, this region may differ from the region where the Confluent Cloud cluster will be deployed.
+confluent_sr_id = "lsrc-xxxxx"
+sr_package      = "ESSENTIALS"  # The billing package configuration of the Confluent Cloud Schema Registry. Valid values are ESSENTIALS and ADVANCED.
+
+## Confluent Cloud Service Account configuration paramters
+account_name                    = "connect"     # The name used to configure the Service Account will use the pattern ${var.prefix}-${var.account_name}-sa.
+
+## Confluent Cloud Role Binding configuration paramters
+license_topic                   = "_confluent-command"
+connect_internal_topic_prefix   = "confluent.*"
+namespace_topic_prefix          = "mse.*"
+license_group_prefix            = "connect*"
+connect_internal_group_prefix   = "confluent*"
+namespace_group_prefix          = "mse*"
+
+## Confluent Cloud CfK Configurations configuration parameters
+cfk_config_dir  = "cfk-on-azure-kubernetes-service"
+
+## Confluent Cloud Azure Container Infrastructure Configurations configuration parameters
+aci_config_dir  = "azure-container-instances"
