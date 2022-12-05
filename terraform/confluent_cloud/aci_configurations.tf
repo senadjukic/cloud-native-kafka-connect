@@ -17,6 +17,8 @@ locals{
         kafka_api_secret              = confluent_api_key.cloud-connect-kafka-api-key.secret,
         ccloud_kafka_bootstrap_url    = trimprefix(confluent_kafka_cluster.standard.bootstrap_endpoint,"SASL_SSL://"), 
         ccloud_sr_url                 = local.ccloud_sr_rest_endpoint
+#        ccloud_sr_api_key             = local.sr_api_key 
+#        ccloud_sr_api_secret          = local.sr_api_secret 
       }   
     )
 }

@@ -70,10 +70,6 @@ resource "null_resource" "configure_kubectl" {
   depends_on = [time_sleep.wait_for_aks_api]
 }
 
-resource "time_sleep" "wait_for_k8s_context" {
-  depends_on = [null_resource.configure_kubectl]
-  create_duration = "30s"
-}
 
 # Configure an application specific Kubernetes namespace in our newly created AKS cluster
 resource "kubernetes_namespace" "aks_ns" {

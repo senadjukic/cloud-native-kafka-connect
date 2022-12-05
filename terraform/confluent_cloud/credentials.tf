@@ -66,3 +66,29 @@ resource "confluent_api_key" "cloud-connect-kafka-api-key" {
 #     prevent_destroy = false
 #   }
 # }
+
+# Workaround to create API Keys for Confluent Cloud Schema Registry, until natively supported in Confluent Cloud's terraform provider,
+# as expected to be released later in the month of December 2022
+
+# Create API Key for newly created Confluent Cloud Schema Registry using the confluent cli.
+resource "null_resource" "cloud-cli-set-env" {
+   provisioner "local-exec" {
+   command     = "confluent environment use ${local.ccloud_env_id}" 
+   interpreter = ["bash", "-c"]
+  }
+  depends_on = [local.ccloud_env_id]
+}
+
+resource "null_resource" "cloud-connect-sr-api-key" {
+   provisioner "local-exec" {
+   command     = "confluent api-key create --service-account ${confluent_service_account.cloud-connect-sa[0].id} --resource ${local.ccloud_sr_id} --description 'API Key for schema registry for environment ${local.ccloud_env_id} that is owned by ${confluent_service_account.cloud-connect-sa[0].display_name} service account.' -o json > ${path.root}/../config/${confluent_service_account.cloud-connect-sa[0].display_name}-${local.ccloud_sr_id}-sr-credentials.json"
+   interpreter = ["bash", "-c"]
+  }
+  depends_on = [null_resource.cloud-cli-set-env, confluent_service_account.cloud-connect-sa, local.ccloud_sr_id]
+}
+
+# locals {
+#  sr_credentials_file = jsondecode(file("${path.root}/../config/${confluent_service_account.cloud-connect-sa[0].display_name}-${local.ccloud_sr_id}-sr-credentials.json"))
+#  sr_api_key          = local.sr_credentials_file.key 
+#  sr_api_secret       = local.sr_credentials_file.secret
+#}
