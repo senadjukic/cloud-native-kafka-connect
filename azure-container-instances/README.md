@@ -10,6 +10,7 @@ This is an example with the Azure Blob Sink Connector that reads from a Kafka to
 ```
 curl -sL --http1.1 https://cnfl.io/cli | sh -s -- latest
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+sudo apt-get install jq (or any other variant on https://stedolan.github.io/jq/download/) 
 ```
 
 This tutorial was tested with the version:
@@ -134,10 +135,10 @@ CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN='[%d] %p %X{connector.con
 CONNECT_CUB_KAFKA_TIMEOUT='300' \
 CONNECT_REST_ADVERTISED_HOST_NAME='kafka-connect-ccloud' \
 CONNECT_REST_PORT='8083' \
-CONNECT_GROUP_ID='connect-01' \
-CONNECT_CONFIG_STORAGE_TOPIC='_connect-01-configs' \
-CONNECT_OFFSET_STORAGE_TOPIC='_connect-01-offsets' \
-CONNECT_STATUS_STORAGE_TOPIC='_connect-01-status' \
+CONNECT_GROUP_ID='connect.azure.sink' \
+CONNECT_CONFIG_STORAGE_TOPIC='confluent.aci.connect.configs' \
+CONNECT_OFFSET_STORAGE_TOPIC='confluent.aci.connect.offsets' \
+CONNECT_STATUS_STORAGE_TOPIC='confluent.aci.connect.status' \
 CONNECT_KEY_CONVERTER='io.confluent.connect.avro.AvroConverter' \
 CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL=${CONFLUENT_CLOUD_SCHEMA_REGISTRY_ENDPOINT} \
 CONNECT_KEY_CONVERTER_BASIC_AUTH_CREDENTIALS_SOURCE='USER_INFO' \
@@ -188,12 +189,24 @@ AZBLOB_CONTAINER_NAME=${BlobContainerName}
 az container show --resource-group $AzureResourceGroup --name $AzureContainerInstancesName --query instanceView.state
 ``` 
 
-**Get Link to Connect State**
-``` 
-echo "http://"$(az container show --resource-group $AzureResourceGroup --name $AzureContainerInstancesName --query ipAddress.ip | tr -d '"')":8083/connectors/${CONNECTOR_NAME}/status"
+**Get Link & Status to Connector**
+```
+# Get Connect Worker IP
+export Connect_Worker_IP=$(az container show --resource-group $AzureResourceGroup --name $AzureContainerInstancesName --query ipAddress.ip | tr -d '"')
+
+echo "http://${Connect_Worker_IP}:8083/connectors/${CONNECTOR_NAME}/status"
+
+# Get connector status of all connect tasks on connect worker
+curl -s "http://${Connect_Worker_IP}:8083/connectors" | \
+  jq '.[]' | \
+  xargs -I{connector_name} curl -s "http://${Connect_Worker_IP}:8083/connectors/{connector_name}/status" | \
+  jq -c -M '[.name,.connector.state,.tasks[].state]|join(":|:")'| \
+  column -s : -t| \
+  sed 's/\"//g'| \
+  sort
 ``` 
 
-**Produce some data to the topic**
+**Optional: Produce some data to the topic**
 ```
 confluent kafka topic produce topic_1
 
@@ -223,7 +236,7 @@ az storage blob list --account-name $StorageAccountName --container-name $BlobCo
 **Troubleshoot**
 ``` 
 # Get logs from container
-az container logs --resource-group $AzureResourceGroup --name $AzureContainerInstancesName
+az container attach --resource-group $AzureResourceGroup --name $AzureContainerInstancesName
 
 # Stop the container
 az container stop --resource-group $AzureResourceGroup --name $AzureContainerInstancesName 
@@ -236,6 +249,12 @@ az container show --resource-group $AzureResourceGroup --name $AzureContainerIns
 
 # Attach a Bash shell of the container
 az container exec --resource-group $AzureResourceGroup --name $AzureContainerInstancesName --exec-command "/bin/bash"
+
+# Delete connector but keep connect worker alive
+curl -s -XDELETE http://${Connect_Worker_IP}:8083/connectors/${CONNECTOR_NAME}
+
+# Get running connectors
+curl -s -XGET http://${Connect_Worker_IP}:8083/connectors | jq
 ``` 
 
 ## Clean up
@@ -246,13 +265,16 @@ az container delete --resource-group $AzureResourceGroup --name $AzureContainerI
 az container list --resource-group $AzureResourceGroup
 
 # Delete connector Kafka topics
-confluent kafka topic delete _connect-01-configs
-confluent kafka topic delete _connect-01-offsets
-confluent kafka topic delete _connect-01-status
+confluent kafka topic delete confluent.aci.connect.configs
+confluent kafka topic delete confluent.aci.connect.offsets
+confluent kafka topic delete confluent.aci.connect.status
 
 # Delete all JSON files from Azure Storage Blob Container
 export StorageAccountConnectionString=$(az storage account show-connection-string --name $StorageAccountName | jq .[])
 az storage blob delete-batch --source $BlobContainerName  --account-name $StorageAccountName --pattern *.json --connection-string $StorageAccountConnectionString
+
+# Delete Azure Storage Blob Container
+az storage container delete --name $BlobContainerName --connection-string $StorageAccountConnectionString
 ```
 
 ## Inspired by:
