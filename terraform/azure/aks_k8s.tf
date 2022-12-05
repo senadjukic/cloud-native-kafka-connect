@@ -83,7 +83,7 @@ resource "kubernetes_namespace" "aks_ns" {
       environment = var.tags["Environment"]
     }
   }
-  depends_on = [time_sleep.wait_for_k8s_context]
+  depends_on = [null_resource.configure_kubectl]
 }
 
 # Set newly created application namespace as default for Kubernetes context on local machine
