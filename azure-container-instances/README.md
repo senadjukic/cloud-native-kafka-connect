@@ -25,7 +25,7 @@ Go Version:  go1.18.1 (linux/amd64)
 Development: false
 ```
 
-1. Create a topic and some random data
+1. Use "mse.pageviews" topic from the datagen connector or create a new topic and some random data
 
 ```
 confluent login
