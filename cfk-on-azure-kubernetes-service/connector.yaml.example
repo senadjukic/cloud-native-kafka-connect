@@ -6,7 +6,7 @@ metadata:
   namespace: confluent
 spec:
   class: "io.confluent.kafka.connect.datagen.DatagenConnector"
-  taskMax: 4
+  taskMax: 1
   connectClusterRef:
     name: connect
   configs:
