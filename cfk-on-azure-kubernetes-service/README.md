@@ -54,7 +54,7 @@ Install Confluent for Kubernetes
 helm repo add confluentinc https://packages.confluent.io/helm
 helm repo update
 
-# nstall Confluent For Kubernetes using Helm
+# Install Confluent For Kubernetes using Helm
 helm upgrade --install confluent-operator confluentinc/confluent-for-kubernetes
 
 # Check that the Confluent For Kubernetes pod comes up and is running

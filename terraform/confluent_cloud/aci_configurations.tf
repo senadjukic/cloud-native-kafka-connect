@@ -8,7 +8,7 @@
 
 # This terraform script sets a set of Confluent Cloud related parameters
 # in Azure Container Infrastructure resource configuration template files, so they 
-# can be used to deploy the resoures for ACI.
+# can be used to deploy the resources for ACI.
 
 # Generate the Confluent Cloud credentials as K8s secret files to be used by CfK artefacts
 locals{

@@ -6,7 +6,7 @@
 ############ Schema Registry ##############
 ###########################################
 
-# Obtain the data-object for an already existing SR when using and exsitng Confluent Cloud environment.
+# Obtain the data-object for an already existing SR when using and existing Confluent Cloud environment.
 data "confluent_schema_registry_cluster" "cc_existing_sr" {
   id = var.confluent_sr_id
   environment {

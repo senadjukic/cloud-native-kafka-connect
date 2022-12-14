@@ -8,7 +8,7 @@
 
 # This terraform script sets a set of Confluent Cloud related parameters
 # in Confluent for Kubernetes resource definition template files, so they 
-# can be used directly with Confluent for Kubermetes to deploy the resoures
+# can be used directly with Confluent for Kubernetes to deploy the resources
 
 # Generate the Confluent Cloud credentials as K8s secret files to be used by CfK artefacts
 locals{
